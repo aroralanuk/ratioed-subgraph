@@ -1,0 +1,26 @@
+specVersion: 1.0.0
+description: ERC-20 subgraph with event handlers & entities
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: RatioedFactory
+    network: base-sepolia
+    source:
+      address: "0xa7e7F0ef6744803F2b141f505815bF0e8608eB0D"
+      abi: RatioedFactory
+      startBlock: 13160184
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - TweetDetail
+        - Market
+      abis:
+        - name: RatioedFactory
+          file: ./abis/RatioedFactory.json
+      eventHandlers:
+        - event: MarketCreated(address,bytes32)
+          handler: handleMarketCreated
+      file: ./src/mapping.ts
