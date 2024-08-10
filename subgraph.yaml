@@ -7,20 +7,38 @@ dataSources:
     name: RatioedFactory
     network: base-sepolia
     source:
-      address: "0xa7e7F0ef6744803F2b141f505815bF0e8608eB0D"
+      address: "0x4a1c013EAB3b2AA30F08f281856132DC10ad0F82"
       abi: RatioedFactory
-      startBlock: 13160184
+      startBlock: 13765760
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
       language: wasm/assemblyscript
       entities:
-        - TweetDetail
         - Market
       abis:
         - name: RatioedFactory
           file: ./abis/RatioedFactory.json
       eventHandlers:
-        - event: MarketCreated(address,bytes32)
+        - event: MarketCreated(address,string)
           handler: handleMarketCreated
+      file: ./src/mapping.ts
+templates:
+  - kind: ethereum/contract
+    name: BinaryMarket
+    network: base-sepolia
+    source:
+      abi: BinaryMarket
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Market
+      abis:
+        - name: BinaryMarket
+          file: ./abis/BinaryMarket.json
+      eventHandlers:
+        - event: MarketInitialized(address,uint256,uint256,uint256,uint256)
+          handler: handleMarketInitialized
       file: ./src/mapping.ts

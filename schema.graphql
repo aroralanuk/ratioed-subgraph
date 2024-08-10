@@ -1,19 +1,18 @@
 # Tweet details
-type TweetDetail @entity {
-  id: ID!
-  text: String!
-  createdAt: String!
-  userProfileImageUrl: String!
-}
+# type TweetDetail @entity {
+#   id: ID!
+#   text: String!
+#   createdAt: String!
+#   userProfileImageUrl: String!
+# }
 
 type Market @entity {
   id: ID!
-  address: String!
-  tweet: TweetDetail!
-  title: String!
-  collateral: BigDecimal!
-  yesShares: BigDecimal!
-  noShares: BigDecimal!
+  tweet: String!
+  collateralToken: String!
+  collateralAmount: BigInt!
+  yesShares: BigInt!
+  noShares: BigInt!
   settlementDeadline: BigInt!
   chance: BigInt!
 }

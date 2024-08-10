@@ -1,36 +1,44 @@
 //import event class from generated files
 import { MarketCreated } from "../generated/RatioedFactory/RatioedFactory";
+import { MarketInitialized } from "../generated/templates/BinaryMarket/BinaryMarket";
+import { BinaryMarket } from "../generated/templates";
 //import the functions defined in utils.ts
 // import { fetchTokenDetails, fetchAccount, updateTokenBalance } from "./utils";
 //import datatype
-import { BigInt } from "@graphprotocol/graph-ts";
+import { bigInt, BigInt } from "@graphprotocol/graph-ts";
+import { Market } from "../generated/schema";
 
-export function handleTransfer(event: MarketCreated): void {
-  // 1. Get token details
-//   let token = fetchTokenDetails(event);
-//   if (!token) {
-//     return;
-//   }
+export function handleMarketCreated(event: MarketCreated): void {
+  let marketAddress = event.params.market;
+  let tweetStatus = event.params.tweetStatus;
 
-  // 2. Get account details
-  let fromAddress = event.params.from.toHex();
-  let toAddress = event.params.to.toHex();
+  let marketData = new Market(marketAddress.toHexString());
+  marketData.tweet = tweetStatus.toString();
+  marketData.collateralToken = "";
+  marketData.collateralAmount = BigInt.fromI32(0);
+  marketData.yesShares = BigInt.fromI32(0);
+  marketData.noShares = BigInt.fromI32(0);
+  marketData.settlementDeadline = BigInt.fromI32(0);
+  marketData.chance = BigInt.fromI32(0);
 
-  let fromAccount = fetchAccount(fromAddress);
-  let toAccount = fetchAccount(toAddress);
+  marketData.save();
 
-  if (!fromAccount || !toAccount) {
+  BinaryMarket.create(marketAddress);
+}
+
+export function handleMarketInitialized(event: MarketInitialized): void {
+  let marketData = Market.load(event.address.toHexString());
+
+  if (marketData == null) {
     return;
   }
 
-  // 3. Update the token balances
-  // Setting the token balance of the 'from' account
-  updateTokenBalance(
-    token,
-    fromAccount,
-    BigInt.fromI32(0).minus(event.params.value)
-  );
+  marketData.collateralToken = event.params.collateralToken.toString();
+  marketData.collateralAmount = event.params.collateralAmount;
+  marketData.yesShares = event.params.yesShares;
+  marketData.noShares = event.params.noShares;
+  marketData.settlementDeadline = event.params.deadline;
+  marketData.chance = BigInt.fromI32(0);
 
-  // Setting the token balance of the 'to' account
-  updateTokenBalance(token, toAccount, event.params.value);
+  marketData.save();
 }

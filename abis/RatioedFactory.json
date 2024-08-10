@@ -53,10 +53,10 @@
         "internalType": "address"
       },
       {
-        "name": "tweetHash",
-        "type": "bytes32",
+        "name": "tweetStatus",
+        "type": "string",
         "indexed": false,
-        "internalType": "bytes32"
+        "internalType": "string"
       }
     ],
     "anonymous": false
