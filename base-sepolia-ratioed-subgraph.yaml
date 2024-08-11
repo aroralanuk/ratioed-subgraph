@@ -1,0 +1,32 @@
+apiVersion: 3
+name: base-sepolia-ratioed-subgraph
+status: ACTIVE
+sources:
+  base_sepolia_market:
+    type: subgraph_entity
+    subgraphs:
+      - name: ratioed-subgraph
+        version: 1.0.12
+    name: market
+transforms:
+  base_sepolia_table:
+    sql: |
+      SELECT
+          id,
+          tweet AS tweet_id,
+          CAST(collateral_amount AS bigint) AS collateral_amount,
+          CAST(yes_shares AS bigint) AS yes_shares,
+          CAST(no_shares AS bigint) AS no_shares,
+          CAST(settlement_deadline AS bigint) AS settlement_deadline,
+          CAST(chance AS bigint) AS chance
+      FROM
+          base_sepolia_market
+    primary_key: id
+sinks:
+  postgres_base_sepolia_market:
+    type: postgres
+    table: ratioed_market
+    schema: public
+    secret_name: POSTGRES_SECRET_CLZONGG7L0
+    description: "Postgres sink for: base_sepolia_market"
+    from: base_sepolia_table
